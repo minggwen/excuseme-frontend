@@ -1,14 +1,15 @@
 import { localAxios } from "@/util/http-commons";
+import axios from 'axios'
 
 const local = localAxios();
 
-async function userConfirm(param, success, fail) {
-  await local.post(`/user/login`, param).then(success).catch(fail);
+async function userConfirm(data, success, fail) {
+  await axios.post(`http://localhost:8080/user/login`,data).then(success).catch(fail);
 }
 
-async function findById(userid, success, fail) {
+async function findById(userId, success, fail) {
   local.defaults.headers["Authorization"] = sessionStorage.getItem("accessToken");
-  await local.get(`/user/info/${userid}`).then(success).catch(fail);
+  await local.get(`http://localhost:8080/user/info/${userId}`).then(success).catch(fail);
 }
 
 async function tokenRegeneration(user, success, fail) {

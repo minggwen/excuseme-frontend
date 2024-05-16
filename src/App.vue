@@ -1,18 +1,21 @@
 <script setup>
 import { ref } from 'vue';
+import { storeToRefs } from "pinia"
 import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { useMemberStore } from '@/stores/jwt_token'
+
 const router = useRouter();
-const login = ref(false);
+const memberStore = useMemberStore()
+
+const { isLogin, isLoginError } = storeToRefs(memberStore)
+const { userLogout, getUserInfo } = memberStore
+
 const logout = () => {
-  localStorage.removeItem("userInfo")
-}
-router.beforeEach((next) => {
-  if (localStorage.getItem("userInfo") != null) {
-    login.value = true;
-  } else {
-    login.value = false;
+  userLogout();
+  if (isLogin.value == false) {
+    router.push("/")
   }
-})
+}
 </script>
 
 <template>
@@ -37,18 +40,18 @@ router.beforeEach((next) => {
           <li class="navbar-item">
             <RouterLink :to="{ name: 'board' }" class="nav-link active fs-5" aria-current="page">후기 게시판</RouterLink>
           </li>
-          <li id='nav-login' class="navbar-item" v-show="login == false">
+          <li id='nav-login' class="navbar-item" v-show="isLogin == false">
             <RouterLink :to="{ name: 'login' }" class="nav-link active fs-5" aria-current="page">로그인</RouterLink>
           </li>
-          <li id='nav-login' class="navbar-item" v-show="login == false">
+          <li id='nav-login' class="navbar-item" v-show="isLogin == false">
             <RouterLink :to="{ name: 'signup' }" class="nav-link active fs-5" aria-current="page">회원가입</RouterLink>
           </li>
 
           <!-- 로그인 하면 display 변경해주기 -->
-          <li id='nav-logout' class="navbar-item" v-show="login">
+          <li id='nav-logout' class="navbar-item" v-show="isLogin">
             <a class="nav-link active fs-5" aria-current="page" @click="logout">로그아웃</a>
           </li>
-          <li id='nav-mypage' class="navbar-item" v-show="login">
+          <li id='nav-mypage' class="navbar-item" v-show="isLogin">
             <RouterLink :to="{ name: 'mypage' }" class="nav-link active fs-5" aria-current="page">마이페이지</RouterLink>
           </li>
         </ul>

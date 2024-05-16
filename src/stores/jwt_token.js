@@ -14,7 +14,7 @@ export const useMemberStore = defineStore("memberStore", () => {
   const userInfo = ref(null)
   const isValidToken = ref(false)
 
-  const userLogin = async (loginUser) => {
+    const userLogin = async (loginUser) => {
     await userConfirm(
       loginUser,
       (response) => {
@@ -31,7 +31,8 @@ export const useMemberStore = defineStore("memberStore", () => {
         }
       },
       (error) => {
-        console.log("로그인 실패!!!!")
+          console.log("로그인 실패!!!!")
+        
         isLogin.value = false
         isLoginError.value = true
         isValidToken.value = false
@@ -42,12 +43,11 @@ export const useMemberStore = defineStore("memberStore", () => {
 
   const getUserInfo = async (token) => {
     let decodeToken = jwtDecode(token)
-    console.log(decodeToken)
     await findById(
       decodeToken.userId,
       (response) => {
-        if (response.status === httpStatusCode.OK) {
-          userInfo.value = response.data.userInfo
+          if (response.status === httpStatusCode.OK) {
+            userInfo.value = response.data.userInfo
         } else {
           console.log("유저 정보 없음!!!!")
         }
@@ -104,18 +104,18 @@ export const useMemberStore = defineStore("memberStore", () => {
     )
   }
 
-  const userLogout = async () => {
+    const userLogout = async () => {
     console.log("로그아웃 아이디 : " + userInfo.value.userId)
     await logout(
       userInfo.value.userId,
-      (response) => {
+        (response) => {
         if (response.status === httpStatusCode.OK) {
-          isLogin.value = false
-          userInfo.value = null
-          isValidToken.value = false
-
-          sessionStorage.removeItem("accessToken")
-          sessionStorage.removeItem("refreshToken")
+            sessionStorage.removeItem("accessToken")
+            sessionStorage.removeItem("refreshToken")
+            isLogin.value = false
+            userInfo.value = null
+            isValidToken.value = false
+            alert("로그아웃 되었습니다.")
         } else {
           console.error("유저 정보 없음!!!!")
         }

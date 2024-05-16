@@ -1,13 +1,16 @@
 <script setup>
 import VueCookies from 'vue-cookies';
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 import { storeToRefs } from "pinia"
 import { useRouter } from 'vue-router'
 import { useMemberStore } from '@/stores/jwt_token'
 
 
 const router = useRouter();
+const memberStore = useMemberStore()
+
+const { isLogin, isLoginError } = storeToRefs(memberStore)
+const { userLogin, getUserInfo } = memberStore
 const id = ref("");
 const pw = ref("");
 const saveId = ref(false);
@@ -20,37 +23,46 @@ const submit = () => {
         login()
     }
 }
-const login = () => {
+const login = async () => {
     const data = {
         userId: id.value,
         userPwd: pw.value
     }
-    axios.post("http://localhost:8080/user/login", data)
-        .then((response) => {
-            console.log(response)
-            if (response.status == 200) {
-                alert("로그인이 완료되었습니다.")
-                localStorage.setItem("userInfo", id.value);
-                // localStorage.setItem('access_token', response.data.token);
-                // localStorage.setItem('expires_in', response.data.expiresIn);
-                // localStorage.setItem('user_role', response.data.role);
-                if (saveId.value == true) {
-                    VueCookies.set("saveId", id.value, 1);
-                } else {
-                    if (VueCookies.get("saveId") != null) {
-                        VueCookies.delete("saveId")
-                    }
-                }
-                router.push("/")
-            }
-        }).catch((error) => {
-            if (error.response.status == 401) {
-                alert("아이디 혹은 비밀번호가 일치하지 않습니다")
-                router.go(0)
-            } else {
-                alert("로그인중 에러가 발생하였습니다.")
-            }
-        })
+    await userLogin(data)
+    let token = sessionStorage.getItem("accessToken")
+    console.log(token)
+    console.log("isLogin: " + isLogin.value)
+    if (isLogin.value) {
+        getUserInfo(token)
+        // changeMenuState()
+        router.replace("/")
+    }
+    // axios.post("http://localhost:8080/user/login", data)
+    //     .then((response) => {
+    //         console.log(response)
+    //         if (response.status == 200) {
+    //             alert("로그인이 완료되었습니다.")
+    //             localStorage.setItem("userInfo", id.value);
+    //             // localStorage.setItem('access_token', response.data.token);
+    //             // localStorage.setItem('expires_in', response.data.expiresIn);
+    //             // localStorage.setItem('user_role', response.data.role);
+    //             if (saveId.value == true) {
+    //                 VueCookies.set("saveId", id.value, 1);
+    //             } else {
+    //                 if (VueCookies.get("saveId") != null) {
+    //                     VueCookies.delete("saveId")
+    //                 }
+    //             }
+    //             router.push("/")
+    //         }
+    //     }).catch((error) => {
+    //         if (error.response.status == 401) {
+    //             alert("아이디 혹은 비밀번호가 일치하지 않습니다")
+    //             router.go(0)
+    //         } else {
+    //             alert("로그인중 에러가 발생하였습니다.")
+    //         }
+    //     })
 }
 onMounted(() => {
     const cookie = VueCookies.get("saveId");

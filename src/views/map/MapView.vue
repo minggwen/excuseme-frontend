@@ -21,6 +21,7 @@ const loadKaKaoMap = (container) => {
     document.head.appendChild(script)
     script.onload = () => {
         window.kakao.maps.load(() => {
+
             const options = {
                 center: new window.kakao.maps.LatLng(33.450701, 126.570667),
                 level: 3,//지도 확대 레벨
@@ -44,9 +45,6 @@ const resizeMapContainer = () => {
     mapContainer.value.style.height = `calc(100vh - ${headerHeight}px)`
 }
 
-const regionSelect = ["서울특별시", "부산광역시", "대구광역시", "인천광역시", "광주광역시", "울산광역시",
-    "세종특별자치시", "경기도", "강원특별자치도", "충청북도", "충청남도", "전라북도", "전라남도", "경상북도", "경상남도", "제주특별자치도"];
-
 </script>
 
 <template>
@@ -54,7 +52,7 @@ const regionSelect = ["서울특별시", "부산광역시", "대구광역시", "
         <button class="btn btn-primary floatBtn" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><img src="@/assets/map.png"
                 class="floatBtnImg"></button>
-        <div class="offcanvas offcanvas-start offcanvas" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+        <div class="offcanvas offcanvas-start offcanvas" data-bs-scroll="false" data-bs-backdrop="false" tabindex="-1"
             id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
             <div class="offcanvas-body row">
                 <div class="col-7 border-end">

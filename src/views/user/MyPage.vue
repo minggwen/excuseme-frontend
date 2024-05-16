@@ -1,10 +1,20 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { storeToRefs } from "pinia";
+import { useMemberStore } from '@/stores/jwt_token'
+
 
 const router = useRouter();
+const memberStore = useMemberStore()
+const { isLogin } = storeToRefs(memberStore)
+
 
 onMounted(() => {
+    if (isLogin == false) {
+        alert("잘못된 접근입니다.")
+        router.push("/")
+    }
     router.push("/mypage/myTrip")
 })
 
