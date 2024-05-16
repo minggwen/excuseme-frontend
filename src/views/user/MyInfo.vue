@@ -1,7 +1,19 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { storeToRefs } from "pinia";
+import { useMemberStore } from '@/stores/jwt_token'
 import MyInfoResignModal from './MyInfoResignModal.vue'
+import axios from 'axios'
+
+const router = useRouter();
 const resignModal = ref(false)
+const memberStore = useMemberStore()
+
+const { getUserInfo } = memberStore
+const { userInfo } = storeToRefs(memberStore)
+const { VITE_URL } = import.meta.env
+
 const resign = () => {
     resignModal.value = true;
 }
@@ -10,16 +22,11 @@ const resignExecute = () => {
     console.log("탈퇴완료")
 
 }
-const modify = () => {
 
-    console.log("수정완료")
-}
-
-const url = ""
-const email = ref('');
-const id = ref('');
-const name = ref('');
-const phoneNumber = ref('');
+const email = ref(userInfo.value.email);
+const id = ref(userInfo.value.userId);
+const name = ref(userInfo.value.userName);
+const phoneNumber = ref(userInfo.value.phone);
 const password = ref('');
 const checkPW = ref("");
 const checkPWClass = ref("form-control mb-2");
@@ -34,6 +41,46 @@ watch(checkPW, (newVal) => {
         checkPWClass.value = "form-control mb-2";
     }
 })
+const submit = () => {
+    if (id.value == "") {
+        alert("아이디를 입력해주세요")
+    } else if (name.value == "") {
+        alert("이름을 입력해주세요")
+    } else if (password.value == "") {
+        alert("비밀번호를 입력해주세요")
+    } else if (email.value == "") {
+        alert("이메일을 입력해주세요")
+    } else if (phoneNumber.value == "") {
+        alert("휴대번호를 입력해주세요")
+    } else if (password.value != checkPW.value) {
+        alert("비밀번호 확인을 확인해주세요")
+    } else {
+        modify();
+    }
+}
+
+const modify = () => {
+    const token = sessionStorage.getItem("accessToken")
+    const url = VITE_URL + "/user/update"
+
+    const data = {
+        "userId": id.value,
+        "userPwd": password.value,
+        "userName": name.value,
+        "phone": phoneNumber.value,
+        "email": email.value
+    }
+    console.log(data)
+    axios.post(url, data, {
+        headers: { "Authorization": token }
+    }).then((response) => {
+        alert("회원 정보 수정이 완료되었습니다.")
+        router.push("/")
+    }).catch((error) => {
+        console.log(error)
+    })
+
+}
 </script>
 
 <template>
@@ -41,7 +88,7 @@ watch(checkPW, (newVal) => {
         <div class="border shadow rounded p-3 col-sm-6 col-md-6 col-lg-4 container centered mt-3 mb-3">
             <div class="justify-content-center">
                 <label for="inputUsername" class="form-label">아이디</label> <span class="text-warning">*</span>
-                <input type="id" class="form-control mb-2" placeholder="아이디 입력" v-model=id required>
+                <input type="id" class="form-control mb-2" :placeholder="id" disabled>
             </div>
             <div class="justify-content-center">
                 <label for="inputPassword" class="form-label">비밀번호</label> <span class="text-warning">*</span>
@@ -75,7 +122,7 @@ watch(checkPW, (newVal) => {
         </div>
         <div class="rounded-top p-0 col-sm-6 col-md-6 col-lg-4 container centered mt-5">
             <div class="row justify-content-center ms-auto me-auto">
-                <button type="button" class="btn btn-primary" @click="modify">완료</button>
+                <button type="button" class="btn btn-primary" @click="submit">완료</button>
             </div>
         </div>
 
