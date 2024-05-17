@@ -7,7 +7,7 @@ import axios from 'axios'
 const { VITE_URL } = import.meta.env
 const mapStore = useMapStore()
 const { route } = storeToRefs(mapStore)
-
+const modalView=ref(false)
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const { route } = storeToRefs(mapStore)
                 </div>
             </div>
         </div>
-        <button class="btn btn-primary">일정 저장</button>
+        <button class="btn btn-primary" @click="modalView.">일정 저장</button>
     </div>
 
 
