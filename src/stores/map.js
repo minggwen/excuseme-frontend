@@ -4,6 +4,7 @@ import { defineStore } from "pinia"
 export const useMapStore = defineStore("mapStore", () => {
     const mapResult = ref([])
     const route = ref([])
+    const saveRoute = ref(false)
 
     const routePush = async (tour) => {
         if (route.value.findIndex(r => r.id == tour.id) === -1) {
@@ -17,6 +18,7 @@ export const useMapStore = defineStore("mapStore", () => {
     return {
         mapResult,
         route,
+        saveRoute,
         routePush,
         routeRemove
     }

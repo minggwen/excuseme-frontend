@@ -34,16 +34,16 @@ watch([region, type, keyword], ([newRegion, newType, newKeyword]) => {
         region: newRegion,
         page: page.value,
     };
-    const url = `${VITE_URL}/tour`;
-    axios.get(url, { params })
-        .then((response) => {
-            mapResult.value = response.data.tourList
-            page.value++;
-            console.log(mapResult.value)
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    // const url = `${VITE_URL}/tour`;
+    // axios.get(url, { params })
+    //     .then((response) => {
+    //         mapResult.value = response.data.tourList
+    //         page.value++;
+    //         console.log(mapResult.value)
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //     });
 });
 // Intersection Observer 초기화 및 설정
 const initIntersectionObserver = () => {
@@ -64,14 +64,14 @@ const fetchTour = () => {
         limit: 20 // 한 번에 보여줄 결과 수
     };
     const url = `${VITE_URL}/tour`;
-    axios.get(url, { params })
-        .then((response) => {
-            mapResult.value = [...mapResult.value, ...response.data.tourList]; // 결과를 추가
-            page.value++; // 페이지 번호 증가
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    // axios.get(url, { params })
+    //     .then((response) => {
+    //         mapResult.value = [...mapResult.value, ...response.data.tourList]; // 결과를 추가
+    //         page.value++; // 페이지 번호 증가
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //     });
 };
 onMounted(() => {
     fetchTour(); // 컴포넌트 마운트 시 초기 데이터 로드
@@ -154,7 +154,7 @@ select option[value=""][disabled] {
 }
 
 .search-btn img {
-    width: 90%;
+    width: 70%;
 }
 
 .result {
