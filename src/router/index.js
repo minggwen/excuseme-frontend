@@ -8,6 +8,8 @@ import MyTrip from "@/views/user/MyTrip.vue"
 import MyPage from "@/views/user/MyPage.vue"
 import MyInfo from "@/views/user/MyInfo.vue"
 import MyReview from "@/views/user/MyReview.vue"
+import MyRouteList from "@/views/myRoute/MyRouteList.vue"
+import MyRouteView from "@/views/myRoute/MyRouteView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,7 +44,13 @@ const router = createRouter({
       name: 'mypage',
       component: MyPage,
       children: [
-        { path: '/mypage/myTrip', name: 'myTrip', component: MyTrip },
+        {
+          path: '/mypage/myTrip', name: 'myTrip', component: MyTrip,
+          children: [
+            { path: '/mypage/myTrip/myRouteList', name: 'myRouteList', component: MyRouteList },
+            { path: '/mypage/myTrip/myRouteView', name: 'myRouteView', component: MyRouteView }
+          ]
+        },
         { path: '/mypage/myReview', name: 'myReview', component: MyReview },
         {path:'/mypage/myInfo',name:'myInfo',component:MyInfo}
       ]
