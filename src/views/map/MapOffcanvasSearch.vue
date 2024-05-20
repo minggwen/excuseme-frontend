@@ -1,5 +1,7 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import { storeToRefs } from "pinia"
+import { useMapStore } from '@/stores/map'
 import axios from 'axios'
 const regionSelect = ["서울특별시", "부산광역시", "대구광역시", "인천광역시", "광주광역시", "울산광역시",
     "세종특별자치시", "경기도", "강원특별자치도", "충청북도", "충청남도", "전라북도", "전라남도", "경상북도", "경상남도", "제주특별자치도"];
@@ -17,27 +19,31 @@ const region = ref("")
 const type = ref("")
 const keyword = ref("")
 
-const results = ref([]);
 const page = ref(1);
 
 const { VITE_URL } = import.meta.env
+const mapStore = useMapStore()
+const { routePush } = mapStore
+const { mapResult } = storeToRefs(mapStore)
+
+
 watch([region, type, keyword], ([newRegion, newType, newKeyword]) => {
     const params = {
         keyword: newKeyword,
         type: newType,
         region: newRegion,
         page: page.value,
-        limit: 20
     };
-    const url = `${VITE_URL}/tour`;
-    axios.get(url, { params })
-        .then((response) => {
-            result.value = response.data
-            page.value++;
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    // const url = `${VITE_URL}/tour`;
+    // axios.get(url, { params })
+    //     .then((response) => {
+    //         mapResult.value = response.data.tourList
+    //         page.value++;
+    //         console.log(mapResult.value)
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //     });
 });
 // Intersection Observer 초기화 및 설정
 const initIntersectionObserver = () => {
@@ -49,13 +55,31 @@ const initIntersectionObserver = () => {
 
     observer.observe(document.querySelector('.scroll-anchor')); // 관찰 대상 설정
 };
+const fetchTour = () => {
+    const params = {
+        keyword: keyword.value,
+        type: type.value,
+        region: region.value,
+        page: page.value, // 페이지 번호 추가
+        limit: 20 // 한 번에 보여줄 결과 수
+    };
+    const url = `${VITE_URL}/tour`;
+    // axios.get(url, { params })
+    //     .then((response) => {
+    //         mapResult.value = [...mapResult.value, ...response.data.tourList]; // 결과를 추가
+    //         page.value++; // 페이지 번호 증가
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //     });
+};
 onMounted(() => {
     fetchTour(); // 컴포넌트 마운트 시 초기 데이터 로드
     initIntersectionObserver(); // Intersection Observer 설정
 });
 </script>
 
-<template>
+<template id="template">
     <div>
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasScrollingLabel">여행 계획 세우기</h5>
@@ -75,10 +99,16 @@ onMounted(() => {
             </select>
         </div>
     </div>
-    <div class="result" style="overflow-y: auto; max-height: 400px;">
+    <div class="result" style="overflow-y: auto; max-height: 600px;" id="result">
         <!-- 여행지 결과를 여기에 표시 -->
-        <div v-for="(result, index) in results" :key="index">
-            {{ result.name }} <!-- 결과 항목의 이름을 예시로 사용 -->
+        <div class="tourItem-container" v-for="result in mapResult" :key="result.id">
+            <img :src="result.img" v-if="result.img != ''">
+            <img src="@/assets/alt.png" v-if="result.img == ''">
+            <div class="tourItem">
+                <p class="tour-title">{{ result.name }}</p>
+                <p class="tour-addr">{{ result.addr }}</p>
+            </div>
+            <button @click=routePush(result) class="tour-btn">+</button>
         </div>
         <!-- 스크롤이 끝에 도달했을 때 감지할 요소 -->
         <div class="scroll-anchor"></div>
@@ -91,6 +121,7 @@ onMounted(() => {
     margin: 0;
     padding: 0;
 }
+
 
 .select-container {
     display: flex;
@@ -123,13 +154,46 @@ select option[value=""][disabled] {
 }
 
 .search-btn img {
-    width: 90%;
+    width: 70%;
 }
 
 .result {
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1.4rem;
     /* 스크롤 가능하도록 설정 */
-    max-height: 400px;
+    /*max-height: 400px;*/
     /* 최대 높이 설정 */
+}
+
+.tourItem-container {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.3rem;
+}
+
+.tourItem-container img {
+    width: 36%;
+    aspect-ratio: 1/1;
+    border-radius: 10px;
+}
+
+.tour-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.tour-addr {
+    font-size: 0.8rem;
+    color: #777777;
+}
+
+.tour-btn {
+    border: none;
+    padding: 0.2rem;
+    border-radius: 5px;
 }
 </style>

@@ -6,8 +6,8 @@ import { useMemberStore } from '@/stores/jwt_token'
 
 const router = useRouter();
 const memberStore = useMemberStore()
-
-const { isLogin, isLoginError } = storeToRefs(memberStore)
+const isToken = ref(sessionStorage.getItem("accessToken") == null ? false : true)
+const { isLogin } = storeToRefs(memberStore)
 const { userLogout, getUserInfo } = memberStore
 
 const logout = () => {
@@ -40,18 +40,18 @@ const logout = () => {
           <li class="navbar-item">
             <RouterLink :to="{ name: 'board' }" class="nav-link active fs-5" aria-current="page">후기 게시판</RouterLink>
           </li>
-          <li id='nav-login' class="navbar-item" v-show="isLogin == false">
+          <li id='nav-login' class="navbar-item" v-show="isToken == false">
             <RouterLink :to="{ name: 'login' }" class="nav-link active fs-5" aria-current="page">로그인</RouterLink>
           </li>
-          <li id='nav-login' class="navbar-item" v-show="isLogin == false">
+          <li id='nav-login' class="navbar-item" v-show="isToken == false">
             <RouterLink :to="{ name: 'signup' }" class="nav-link active fs-5" aria-current="page">회원가입</RouterLink>
           </li>
 
           <!-- 로그인 하면 display 변경해주기 -->
-          <li id='nav-logout' class="navbar-item" v-show="isLogin">
+          <li id='nav-logout' class="navbar-item" v-show="isToken">
             <a class="nav-link active fs-5" aria-current="page" @click="logout">로그아웃</a>
           </li>
-          <li id='nav-mypage' class="navbar-item" v-show="isLogin">
+          <li id='nav-mypage' class="navbar-item" v-show="isToken">
             <RouterLink :to="{ name: 'mypage' }" class="nav-link active fs-5" aria-current="page">마이페이지</RouterLink>
           </li>
         </ul>
