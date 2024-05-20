@@ -42,12 +42,13 @@ export const useMemberStore = defineStore("memberStore", () => {
   }
 
   const getUserInfo = async (token) => {
-    let decodeToken = jwtDecode(token)
+    let decodeToken = await jwtDecode(token)
     await findById(
       decodeToken.userId,
       (response) => {
           if (response.status === httpStatusCode.OK) {
             userInfo.value = response.data.userInfo
+            console.log(userInfo.value.userId)
         } else {
           console.log("유저 정보 없음!!!!")
         }
@@ -57,7 +58,10 @@ export const useMemberStore = defineStore("memberStore", () => {
           "g[토큰 만료되어 사용 불가능.] : ",
           error.response.status,
           error.response.statusText
+          
         )
+        sessionStorage.removeItem("accessToken")
+        sessionStorage.removeItem("refreshToken")
         isValidToken.value = false
 
         await tokenRegenerate()
@@ -105,7 +109,8 @@ export const useMemberStore = defineStore("memberStore", () => {
   }
 
     const userLogout = async () => {
-    console.log("로그아웃 아이디 : " + userInfo.value.userId)
+      await getUserInfo(sessionStorage.getItem("accessToken"))
+      console.log(userInfo.value)
     await logout(
       userInfo.value.userId,
         (response) => {

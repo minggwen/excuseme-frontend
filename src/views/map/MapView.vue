@@ -69,8 +69,8 @@ watch(mapResult, () => {
 });
 const addMarker = (tour, position) => {
 
-    var imageSrc = "https://i.ibb.co/vmTMZSr/marker.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
-        imageSize = new kakao.maps.Size(22, 24),  // 마커 이미지의 크기
+    var imageSrc = "https://i.ibb.co/W6zKbd9/marker.png" // 마커 이미지 url, 스프라이트 이미지를 씁니다
+    var imageSize = new kakao.maps.Size(22, 24),  // 마커 이미지의 크기
         imgOptions = {
             // spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
             // spriteOrigin: new kakao.maps.Point(0, 46), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
@@ -156,6 +156,11 @@ const closeOverlay = () => {
 const addTour = (tour) => {
     routePush(tour);
 }
+const moveMap = (tour) => {
+    var pos = new kakao.maps.LatLng(tour.map_y, tour.map_x + 0.001)
+    mapInstance.panTo(pos);
+    mapInstance.setLevel(4);
+}
 </script>
 
 <template>
@@ -167,7 +172,7 @@ const addTour = (tour) => {
             id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
             <div class="offcanvas-body row">
                 <div class="col-7 border-end">
-                    <MapOffcanvasSearch />
+                    <MapOffcanvasSearch @moveTo="moveMap" />
                 </div>
                 <div class="col-5">
                     <div class="offcanvas-header">

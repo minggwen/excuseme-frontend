@@ -12,7 +12,7 @@ export const useMapStore = defineStore("mapStore", () => {
         }
     }
     const routeRemove = async (tour) => {
-        route.splice(route.findIndex(t => t.id === tour.id));
+        route.value.splice(route.value.findIndex(t => t.id === tour.id),1);
     }
 
     return {

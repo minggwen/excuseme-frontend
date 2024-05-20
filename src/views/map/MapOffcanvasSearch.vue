@@ -27,23 +27,23 @@ const { routePush } = mapStore
 const { mapResult } = storeToRefs(mapStore)
 
 
-watch([region, type, keyword], ([newRegion, newType, newKeyword]) => {
+watch([region, type, keyword], () => {
     const params = {
-        keyword: newKeyword,
-        type: newType,
-        region: newRegion,
-        page: page.value,
+        keyword: keyword.value,
+        type: type.value,
+        region: region.value,
+        page: 1, // 페이지 번호 추가
     };
-    // const url = `${VITE_URL}/tour`;
-    // axios.get(url, { params })
-    //     .then((response) => {
-    //         mapResult.value = response.data.tourList
-    //         page.value++;
-    //         console.log(mapResult.value)
-    //     })
-    //     .catch((error) => {
-    //         console.log(error);
-    //     });
+
+    const url = `${VITE_URL}/tour`;
+    axios.get(url, { params })
+        .then((response) => {
+            mapResult.value = response.data.tourList
+            console.log(mapResult.value)
+        })
+        .catch((error) => {
+            console.log(error);
+        });
 });
 // Intersection Observer 초기화 및 설정
 const initIntersectionObserver = () => {
@@ -53,25 +53,29 @@ const initIntersectionObserver = () => {
         }
     }, { threshold: 1.0 });
 
-    observer.observe(document.querySelector('.scroll-anchor')); // 관찰 대상 설정
+    const scrollAnchor = document.querySelector('.scroll-anchor');
+    if (scrollAnchor) {
+        observer.observe(scrollAnchor); // 관찰 대상 설정
+    } else {
+        console.error("Scroll anchor element not found.");
+    }
 };
 const fetchTour = () => {
     const params = {
-        keyword: keyword.value,
+        keyword: encodeURIComponent(keyword.value),
         type: type.value,
         region: region.value,
         page: page.value, // 페이지 번호 추가
-        limit: 20 // 한 번에 보여줄 결과 수
     };
     const url = `${VITE_URL}/tour`;
-    // axios.get(url, { params })
-    //     .then((response) => {
-    //         mapResult.value = [...mapResult.value, ...response.data.tourList]; // 결과를 추가
-    //         page.value++; // 페이지 번호 증가
-    //     })
-    //     .catch((error) => {
-    //         console.log(error);
-    //     });
+    axios.get(url, { params })
+        .then((response) => {
+            mapResult.value = [...mapResult.value, ...response.data.tourList]; // 결과를 추가
+            page.value++; // 페이지 번호 증가
+        })
+        .catch((error) => {
+            console.log(error);
+        });
 };
 onMounted(() => {
     fetchTour(); // 컴포넌트 마운트 시 초기 데이터 로드
@@ -101,7 +105,7 @@ onMounted(() => {
     </div>
     <div class="result" style="overflow-y: auto; max-height: 600px;" id="result">
         <!-- 여행지 결과를 여기에 표시 -->
-        <div class="tourItem-container" v-for="result in mapResult" :key="result.id">
+        <div class="tourItem-container" v-for="result in mapResult" :key="result.id" @click="$emit('moveTo', result)">
             <img :src="result.img" v-if="result.img != ''">
             <img src="@/assets/alt.png" v-if="result.img == ''">
             <div class="tourItem">

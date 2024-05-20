@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { storeToRefs } from "pinia"
 import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useMemberStore } from '@/stores/jwt_token'
@@ -9,11 +9,15 @@ const memberStore = useMemberStore()
 const isToken = ref(sessionStorage.getItem("accessToken") == null ? false : true)
 const { isLogin } = storeToRefs(memberStore)
 const { userLogout, getUserInfo } = memberStore
-
-const logout = () => {
-  userLogout();
-  if (isLogin.value == false) {
+watch(isLogin, () => {
+  if (isLogin.value == true) {
     router.push("/")
+  }
+})
+const logout = async () => {
+  await userLogout();
+  if (isLogin.value == false) {
+    router.go(0)
   }
 }
 </script>
