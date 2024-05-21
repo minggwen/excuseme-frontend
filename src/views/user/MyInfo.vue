@@ -3,17 +3,14 @@ import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from "pinia";
 import { useMemberStore } from '@/stores/jwt_token'
+import { stationAxios } from "@/util/http-commons";
 import MyInfoResignModal from './MyInfoResignModal.vue'
 import axios from 'axios'
 
 const router = useRouter();
 const resignModal = ref(false)
 const memberStore = useMemberStore()
-
-const { getUserInfo } = memberStore
-const { userInfo } = storeToRefs(memberStore)
 const { VITE_URL } = import.meta.env
-
 const resign = () => {
     resignModal.value = true;
 }
@@ -23,14 +20,30 @@ const resignExecute = () => {
 
 }
 
-const email = ref(userInfo.value.email);
-const id = ref(userInfo.value.userId);
-const name = ref(userInfo.value.userName);
-const phoneNumber = ref(userInfo.value.phone);
+const email = ref("");
+const id = ref("");
+const name = ref("");
+const phoneNumber = ref("");
 const password = ref('');
 const checkPW = ref("");
 const checkPWClass = ref("form-control mb-2");
 
+onMounted(() => {
+    const axiosInstance = stationAxios();
+    axiosInstance.get("/user")
+        .then((response) => {
+            const userInfo = response.data.userInfo;
+            console.log(userInfo)
+            email.value = userInfo.email;
+            id.value = userInfo.userId;
+            name.value = userInfo.userName;
+            password.value = userInfo.userPwd;
+            phoneNumber.value = userInfo.phone;
+        })
+        .catch((error) => {
+            console.error(error)
+        })
+})
 watch(phoneNumber, (newVal) => {
     phoneNumber.value = newVal.replace(/\D/g, '').replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
 });

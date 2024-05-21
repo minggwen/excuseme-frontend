@@ -21,7 +21,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <ul class="nav nav-underline justify-content-center border-bottom">
+    <ul class="nav nav-underline justify-content-center border-bottom mypage-nav">
         <li class="nav-item">
             <RouterLink :to="{ name: 'myTrip' }" class="nav-link list" aria-current="page">나의 여행</RouterLink>
         </li>

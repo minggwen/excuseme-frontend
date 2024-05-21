@@ -10,6 +10,10 @@ import MyInfo from "@/views/user/MyInfo.vue"
 import MyReview from "@/views/user/MyReview.vue"
 import MyRouteList from "@/views/myRoute/MyRouteList.vue"
 import MyRouteView from "@/views/myRoute/MyRouteView.vue"
+import BoardList from "@/views/board/BoardList.vue"
+import ArticleRegister from "@/views/board/ArticleRegister.vue"
+import ArticleModify from "@/views/board/ArticleModify.vue"
+import ArticleView from "@/views/board/ArticleView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,8 +58,18 @@ const router = createRouter({
         { path: '/mypage/myReview', name: 'myReview', component: MyReview },
         {path:'/mypage/myInfo',name:'myInfo',component:MyInfo}
       ]
+    },
+    {
+      path: '/board',
+      name: 'board',
+      component: BoardView,
+      children: [
+        { path: '/board/list', name: 'boardList', component: BoardList },
+        { path: '/article/register', name: 'artcleRegister', component: ArticleRegister},
+        { path: '/article/modify/:articleno', name: 'artcleModify', component: ArticleModify },
+        {path:'/aritcle/view/:articleno',name:'articleView',component:ArticleView}
+      ]
     }
-    
   ]
 })
 

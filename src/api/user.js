@@ -9,7 +9,7 @@ async function userConfirm(data, success, fail) {
 
 async function findById(userId, success, fail) {
   local.defaults.headers["Authorization"] = sessionStorage.getItem("accessToken");
-  await local.get(`http://localhost:8080/user/info/${userId}`).then(success).catch(fail);
+  await local.get(`http://localhost:8080/user`).then(success).catch(fail);
 }
 
 async function tokenRegeneration(user, success, fail) {
